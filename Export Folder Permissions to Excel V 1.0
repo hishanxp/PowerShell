@@ -1,0 +1,70 @@
+--------------------------- Code Start here---------------------------------------------
+
+#Reading first level of direcories only
+#Enter the search folder drive letter or folder path here  E.g : "z:\" ," C:\users"
+#File will be saved on the desktop as Folder_Permissions.csv
+
+$searchFolder="s:\"
+
+$DesktopPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop)
+$outPut= $DesktopPath + "\Folder_Permissions.csv"
+
+$folders=0
+$stepCounter=0
+
+#if you need to search for sub folder permissons add -Recursive after -Directory attribute
+$FolderPath = dir -Directory -Path $searchFolder -Force
+if you need to count the sub folders  add -Recursive after -Directory attribute
+$folders= (Get-ChildItem -Directory -PATH $searchFolder | Measure-Object).Count
+
+$Report = @()
+$err=0
+Foreach ($Folder in $FolderPath) 
+  {
+  $err=0
+       Try
+        {
+            $Acl = Get-Acl -Path $Folder.FullName
+            if ($err -eq 0)
+            {
+            Write-Host $stepCounter " Reading :>" $Folder.FullName -ForegroundColor Green 
+              foreach ($Access in $acl.Access)
+              {
+     
+               $Properties = [ordered]@{'FolderName'=$Folder.FullName;'AD Group or    User'=$Access.IdentityReference;'Permissions'=$Access.FileSystemRights;'Inherited'=$Access.IsInherited}
+               $Report += New-Object -TypeName PSObject -Property $Properties
+               
+        
+              }
+          
+            }
+        
+        }
+
+     
+        Catch 
+         {
+          Write-Host $stepcounter " Unable to access :>" $Folder.FullName -ForegroundColor White -BackgroundColor Red
+          $Properties = [ordered]@{'FolderName'=$Folder.FullName;'AD Group or User'="No Access";'Permissions'="No Access";'Inherited'="N/A"}
+          $Report +=New-Object -TypeName PSObject -Property $Properties
+          $err=1
+         }
+
+      $stepCounter++
+      
+      Try
+      {
+      #Progressbar
+      Write-Progress -Activity "Gathering permissions" -status "Folders Found $folders" ` -percentComplete (($stepCounter / $folders)*100)
+      }
+      Catch
+      {
+      }
+
+   }
+Write-Host " " 
+Write-Host "--------------Done!!---------------------- " -ForegroundColor Green
+Write-Host " " 
+Write-Host "Folders Scaned : " $stepCounter -ForegroundColor Green 
+Write-Host "CSV Saved at  : " $DesktopPath"\Folder_Permissions.csv" -ForegroundColor Green 
+$Report | Export-Csv $outPut 
