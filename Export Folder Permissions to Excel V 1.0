@@ -16,7 +16,8 @@ $stepCounter=0
 
 #if you need to search for sub folder permissons add -Recursive after -Directory attribute
 $FolderPath = dir -Directory -Path $searchFolder -Force
-if you need to count the sub folders  add -Recursive after -Directory attribute
+
+#if you need to count the sub folders  add -Recursive after -Directory attribute
 $folders= (Get-ChildItem -Directory -PATH $searchFolder | Measure-Object).Count
 
 $Report = @()
