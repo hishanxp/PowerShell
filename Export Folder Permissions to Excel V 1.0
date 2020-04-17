@@ -1,9 +1,11 @@
+
+Powershell script Export Folder Permissions to Excel V 1.0
 --------------------------- Code Start here---------------------------------------------
 
 #Reading first level of direcories only
 #Enter the search folder drive letter or folder path here  E.g : "z:\" ," C:\users"
 #File will be saved on the desktop as Folder_Permissions.csv
-
+#Authour :Hishan Shouketh 2020
 $searchFolder="s:\"
 
 $DesktopPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop)
