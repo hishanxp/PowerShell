@@ -1,5 +1,5 @@
 
-Powershell script Export Folder Permissions to Excel V 1.0
+Powershell script Export Folder Permissions to Excel V 1.1
 --------------------------- Code Start here---------------------------------------------
 
 #Reading first level of direcories only
